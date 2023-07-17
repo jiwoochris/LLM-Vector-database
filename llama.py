@@ -1,11 +1,11 @@
-from transformers import LlamaModel, LlamaConfig
+from transformers import GPTNeoXModel, GPTNeoXConfig
 
 import torch
 from typing import List, Optional, Tuple, Union
 
-class Custom_LlamaModel(LlamaModel):
+class Custom_LlamaModel(GPTNeoXModel):
 
-    def __init__(self, config: LlamaConfig):
+    def __init__(self, config: GPTNeoXConfig):
         super().__init__(config)
 
     def forward(

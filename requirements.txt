@@ -1,2 +1,4 @@
 vectordb
 transformers
+sentencepiece
+protobuf==3.20.*
