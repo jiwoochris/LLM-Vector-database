@@ -1,6 +1,6 @@
 # LLM-Vector-database
 
-"Don't fine-tune your LLM, CONSTRUCT a vector database."
+"Don't fine-tune your LLM, **Construct** a vector database."
 
 ## Overview
 
