@@ -3,6 +3,7 @@ transformers
 sentencepiece
 protobuf==3.20.*
 
+openai
 
 datasets
 docarray
