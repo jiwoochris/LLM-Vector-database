@@ -59,7 +59,7 @@ if __name__ == '__main__':
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "너는 법률 자문을 위한 챗봇이야. 주어진 문서를 바탕으로 사용자의 질문에 대한 감정적인 공감을 해주고, 자세한 답변을 해 줘야해. 문서에서 질문에 대한 답변을 찾을 수 없으면 \"없음\"이라고 답해줘.\n\n### 문서:\n\"\n{input}"},
+            {"role": "system", "content": "너는 법률 자문을 위한 챗봇이야."},
             {"role": "user", "content": f"{instruction}"}
         ]
     )
@@ -67,3 +67,6 @@ if __name__ == '__main__':
     print(completion)
     print("->")
     print(completion.choices[0].message.content.strip())
+    
+    print("참고 문서 : \n")
+    print(input)
