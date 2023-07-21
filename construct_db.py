@@ -1,7 +1,7 @@
 import argparse
 
-from docarray import BaseDoc
-from docarray.typing import NdArray
+from module.doc import ToyDoc
+
 from docarray import DocList
 
 from vectordb import InMemoryExactNNVectorDB
@@ -18,10 +18,6 @@ if __name__ == '__main__':
     parser.add_argument('--workspace', default='workspace_path', type=str, help="workspace path for vector database")
     
     opt = parser.parse_args()
-    
-    class ToyDoc(BaseDoc):
-        text: str = ''
-        embedding: NdArray[4096]
 
     # Specify your workspace path
     db = InMemoryExactNNVectorDB[ToyDoc](workspace=opt.workspace)

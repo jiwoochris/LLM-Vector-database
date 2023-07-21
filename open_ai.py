@@ -1,44 +1,69 @@
+import argparse
+
 import openai
 
-# 보안을 위해 api_key.txt는 따로 보관
-api_key_file = "api_key.txt"
+import os
 
-with open(api_key_file, 'r') as file:
-    api_token = file.read()
+from module.exceptions import APIKeyNotFoundError
+
+from module.prompter import Prompter
+
+from module.doc import ToyDoc
+
+from module.model import Model
+
+from docarray import DocList
+
+from vectordb import InMemoryExactNNVectorDB
+
+
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
     
+    parser.add_argument('--template_name', default='law', type=str, help="template_name")  # required=True, 
+    parser.add_argument('--workspace', default='workspace_path', type=str, help="workspace path for vector database")
+    
+    opt = parser.parse_args()
+    
+    
+
+    api_token = os.getenv("OPENAI_API_KEY") or None
+    if api_token is None:
+        raise APIKeyNotFoundError("OPEN AI API key is required")
+
     openai.api_key = api_token
-            
-
-LLM_prompt =  """
-너는 법률 자문을 위한 챗봇이야. 사용자의 질문에 대한 답변을 해 줘야해.
-
-사용자의 질문 : "몸이 아파서 회사에 안나갔는데, 무단결근이라고 해고당했습니다. 이게 맞나요?"
-
-아래 문서를 바탕으로 사용자의 질문에 대답해줘.
-
-문서 : 
-"
-질문 : 몸이 아파 일주일 동안 회사에 출근하지 않았는데, 회사에서 무단결근을 이유로 해고하였습니다. 정당한 해고 인가요?
-답변 : 취업규칙이나 단체협약에서 무단결근을 해고사유나 징계사유로 정하고 있는 경우에 이러한 취업규칙이나 단체협약은 특별한 사정이 없는 한 무효라고 할 수 없으므로 근로자를 무단결근을 이유로 해고하는 것은 정당한 해고에 해당합니다.
-"
-"""
-
-LLM_prompt = "몸이 아파서 회사에 안나갔는데, 무단결근이라고 해고당했습니다. 이게 맞나요?"
-
-response = openai.Completion.create(
-    model="text-davinci-003",
-    prompt=LLM_prompt,
-    max_tokens=516,
-    temperature=0.7,
-    top_p=0.9,
-    n=1,
-    stream=False,
-    logprobs=None
-)
 
 
-print(response)
-print("->")
-print(response.choices[0].text.strip())
+    prompter = Prompter(opt.template_name, verbose=True)
+    
+    instruction = "질병 때문에 회사에 안나갔는데, 무단결근이라고 해고당했습니다. 이래도 되는거 맞나요?"
+    
+    
+    # Specify your workspace path
+    db = InMemoryExactNNVectorDB[ToyDoc](workspace=opt.workspace)
+    
+    # Define model
+    model = Model()
 
-answer1 = response.choices[0].text.strip()
+    # Perform a search query
+    query = ToyDoc(text = instruction, embedding = model.get_embedding(instruction))
+    results = db.search(inputs=DocList[ToyDoc]([query]), limit=5)
+    
+    input = results[0].matches[0].text
+    
+    # prompt = prompter.generate_prompt(instruction, input)
+    
+
+    completion = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "너는 법률 자문을 위한 챗봇이야. 주어진 문서를 바탕으로 사용자의 질문에 대한 감정적인 공감을 해주고, 자세한 답변을 해 줘야해. 문서에서 질문에 대한 답변을 찾을 수 없으면 \"없음\"이라고 답해줘.\n\n### 문서:\n\"\n{input}"},
+            {"role": "user", "content": f"{instruction}"}
+        ]
+    )
+    
+    print(completion)
+    print("->")
+    print(completion.choices[0].message.content.strip())
