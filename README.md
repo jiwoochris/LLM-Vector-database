@@ -23,11 +23,29 @@ LLM-Vector-database is a powerful tool that allows you to construct a vector dat
 
 ## Getting Started
 
+To get started with LLM-Vector-database, you'll need to clone the repository and install the necessary dependencies.
+
+```bash
+git clone https://github.com/juicyjung/LLM-Vector-database.git
+```
+
+```bash
+pip install -r requirements.txt
+```
+
 ## Usage
 
-## Contributing
+To use LLM-Vector-database, you'll need to run the construct_db.py script to documents embedding and builing vector database. Here's an example of how to do this:
 
-## License
+```bash
+python construct_db.py --hugging_face 'juicyjung/easylaw_kr_documents'
+```
+
+To use the OpenAI Large Language Model (LLM) with the LLM-Vector-database, you'll need to run the open_ai.py script. Here's how to do this:
+
+```bash
+python open_ai.py
+```
 
 ## Contact
 
