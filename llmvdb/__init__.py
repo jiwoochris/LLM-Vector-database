@@ -21,7 +21,7 @@ Example:
 """
 
 
-from .module.doc import ToyDoc
+from .vdb.doc import ToyDoc
 
 from docarray import DocList
 
@@ -29,13 +29,13 @@ from vectordb import InMemoryExactNNVectorDB
 
 from datasets import load_dataset
 
-from .module.model import Model
+from .embedding.model import Model
 
 import openai
 
 import os
 
-from .module.exceptions import APIKeyNotFoundError
+from .llm.exceptions import APIKeyNotFoundError
 
 from .helpers.ineterface import Interface
 
@@ -53,47 +53,57 @@ class Llmvdb(Interface):
     ):
         self.workspace = workspace
         self.hugging_face = hugging_face
-
+        self.model = Model()
+        self.db = self.initialize_db()
+        
+    def initialize_db(self):
+        
         # Specify your workspace path
         db = InMemoryExactNNVectorDB[ToyDoc](workspace=self.workspace)
+        
+        if self.hugging_face == None :
+            return db
+        
+        else :
+            # Download Data from huggingface
+            data = load_dataset(self.hugging_face)["train"]
 
-        # Download Data from huggingface
-        data = load_dataset(hugging_face)["train"]
-        print(data)
+            # Index a list of documents with random embeddings
+            doc_list = [
+                ToyDoc(text=i["documents"], embedding=self.model.get_embedding(i["documents"]))
+                for i in data
+            ]
+            db.index(inputs=DocList[ToyDoc](doc_list))
 
-        # Define model
-        model = Model()
+            # Save db
+            db.persist()
+            
+            return db
 
-        # Index a list of documents with random embeddings
-        doc_list = [
-            ToyDoc(text=i["documents"], embedding=model.get_embedding(i["documents"]))
-            for i in data
-        ]
-        db.index(inputs=DocList[ToyDoc](doc_list))
+    def generate_prompt(self, prompt):
+        # Perform a search query
+        query = ToyDoc(text=prompt, embedding=self.model.get_embedding(prompt))
+        results = self.db.search(inputs=DocList[ToyDoc]([query]), limit=5)
 
-        # Save db
-        db.persist()
+        input = results[0].matches[0].text
 
-    def generate(self, prompt):
+        completion = self.create_completion(prompt, input)
+
+        print(completion)
+        print("->")
+        print(completion.choices[0].message.content.strip())
+
+        print("\n\n참고 문서 : \n")
+        print(input)
+
+    def create_completion(self, prompt, input):
         api_token = os.getenv("OPENAI_API_KEY") or None
         if api_token is None:
             raise APIKeyNotFoundError("OPEN AI API key is required")
 
         openai.api_key = api_token
 
-        # Specify your workspace path
-        db = InMemoryExactNNVectorDB[ToyDoc](workspace=self.workspace)
-
-        # Define model
-        model = Model()
-
-        # Perform a search query
-        query = ToyDoc(text=prompt, embedding=model.get_embedding(prompt))
-        results = db.search(inputs=DocList[ToyDoc]([query]), limit=5)
-
-        input = results[0].matches[0].text
-
-        completion = openai.ChatCompletion.create(
+        return openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
                 {
@@ -103,10 +113,3 @@ class Llmvdb(Interface):
                 {"role": "user", "content": f"{prompt}"},
             ],
         )
-
-        print(completion)
-        print("->")
-        print(completion.choices[0].message.content.strip())
-
-        print("\n\n참고 문서 : \n")
-        print(input)

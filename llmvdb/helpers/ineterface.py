@@ -3,9 +3,13 @@ from abc import ABC, abstractmethod
 
 class Interface(ABC):
     @abstractmethod
-    def construct_db(self):
+    def initialize_db(self):
         pass
 
     @abstractmethod
-    def generate_text(self):
+    def generate_prompt(self):
+        pass
+    
+    @abstractmethod
+    def create_completion(self):
         pass
