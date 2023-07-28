@@ -55,29 +55,31 @@ class Llmvdb(Interface):
         self.hugging_face = hugging_face
         self.model = Model()
         self.db = self.initialize_db()
-        
+
     def initialize_db(self):
-        
         # Specify your workspace path
         db = InMemoryExactNNVectorDB[ToyDoc](workspace=self.workspace)
-        
-        if self.hugging_face == None :
+
+        if self.hugging_face is None:
             return db
-        
-        else :
+
+        else:
             # Download Data from huggingface
             data = load_dataset(self.hugging_face)["train"]
 
             # Index a list of documents with random embeddings
             doc_list = [
-                ToyDoc(text=i["documents"], embedding=self.model.get_embedding(i["documents"]))
+                ToyDoc(
+                    text=i["documents"],
+                    embedding=self.model.get_embedding(i["documents"]),
+                )
                 for i in data
             ]
             db.index(inputs=DocList[ToyDoc](doc_list))
 
             # Save db
             db.persist()
-            
+
             return db
 
     def generate_prompt(self, prompt):
