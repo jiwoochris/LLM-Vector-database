@@ -39,21 +39,27 @@ from .llm.exceptions import APIKeyNotFoundError
 
 from .helpers.ineterface import Interface
 
+from typing import Optional
+
 
 class Llmvdb(Interface):
+    # llm: LLM
+    verbose: bool = False
+    workspace: Optional[str] = None
+    model: Model
+    db: InMemoryExactNNVectorDB
+
     def __init__(
         self,
         llm=None,
-        conversational=False,
-        verbose=False,
-        enable_cache=True,
-        enable_logging=True,
+        embedding=None,
         hugging_face=None,
         workspace=None,
     ):
         self.workspace = workspace
         self.hugging_face = hugging_face
-        self.model = Model()
+        self.embedding = Model()
+        self.llm = self.load_llm(llm)
         self.db = self.initialize_db()
 
     def initialize_db(self):
@@ -71,7 +77,7 @@ class Llmvdb(Interface):
             doc_list = [
                 ToyDoc(
                     text=i["documents"],
-                    embedding=self.model.get_embedding(i["documents"]),
+                    embedding=self.embedding.get_embedding(i["documents"]),
                 )
                 for i in data
             ]
@@ -84,7 +90,7 @@ class Llmvdb(Interface):
 
     def generate_prompt(self, prompt):
         # Perform a search query
-        query = ToyDoc(text=prompt, embedding=self.model.get_embedding(prompt))
+        query = ToyDoc(text=prompt, embedding=self.embedding.get_embedding(prompt))
         results = self.db.search(inputs=DocList[ToyDoc]([query]), limit=5)
 
         input = results[0].matches[0].text
@@ -115,3 +121,6 @@ class Llmvdb(Interface):
                 {"role": "user", "content": f"{prompt}"},
             ],
         )
+
+    def load_llm(self, llm):
+        return None

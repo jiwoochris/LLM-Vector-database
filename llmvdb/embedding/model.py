@@ -16,8 +16,6 @@ class Model:
         # Calculate the sentence vector by averaging the hidden states across the sequence length dimension
         sentence_vector = torch.mean(embedding, dim=1)
 
-        print(prompt)
-
         return sentence_vector
 
 
