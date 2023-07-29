@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from ..exceptions import MethodNotImplementedError
 
+
 class LLM:
     """Base class to implement a new LLM."""
 
@@ -8,7 +9,7 @@ class LLM:
         return True
 
     @abstractmethod
-    def call(self, prompt : str, document : str) -> str:
+    def call(self, prompt: str, document: str) -> str:
         """
         Execute the LLM with given prompt.
 

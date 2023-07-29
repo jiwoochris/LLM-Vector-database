@@ -43,7 +43,7 @@ class Llmvdb(Interface):
     ):
         self.embedding = embedding
         self.llm = llm
-        
+
         self.workspace = workspace
         self.hugging_face = hugging_face
         self.db = self.initialize_db()

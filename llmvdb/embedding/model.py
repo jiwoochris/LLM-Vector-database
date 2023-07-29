@@ -6,7 +6,7 @@ from .base import Embedding
 
 
 class HuggingFaceEmbedding(Embedding):
-    def __init__(self, pretrained : str = "beomi/KoAlpaca-Polyglot-5.8B"):
+    def __init__(self, pretrained: str = "beomi/KoAlpaca-Polyglot-5.8B"):
         self.tokenizer = AutoTokenizer.from_pretrained(pretrained)
         self.model = InputEmbeddingModel.from_pretrained(pretrained)
 

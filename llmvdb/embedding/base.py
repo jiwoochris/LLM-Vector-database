@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from ..exceptions import MethodNotImplementedError
 
+
 class Embedding:
     """Base class to implement a new LLM."""
 
@@ -8,7 +9,7 @@ class Embedding:
         return True
 
     @abstractmethod
-    def get_embedding(self, prompt : str):
+    def get_embedding(self, prompt: str):
         """
         Get embedding with given prompt.
 

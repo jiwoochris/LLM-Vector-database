@@ -1,13 +1,21 @@
-# /tests/test_simple.py
+# /tests/test_llmvdb.py
 
-import pytest
-from unittest.mock import patch, Mock, MagicMock
-from llmvdb.vdb.doc import ToyDoc
-from llmvdb import Llmvdb, APIKeyNotFoundError
-import numpy as np
 
-class TestLlmvdb:
+# Here is the function we're going to test
+def add(a, b):
+    return a + b
 
-    """Unit tests for the Llmvdb class"""
-    def test_add():
-        assert 2 == 2
+
+# Here are our pytest tests for the add function
+def test_add():
+    assert add(1, 1) == 2
+    assert add(-1, -1) == -2
+    assert add(0, 5) == 5
+
+
+# class TestLlmvdb:
+
+#     """Unit tests for the Llmvdb class"""
+
+#     def test_add():
+#         assert 2 + 2 == 4

@@ -22,6 +22,7 @@ class UnsupportedOpenAIModelError(Exception):
         Exception (Exception): UnsupportedOpenAIModelError
     """
 
+
 class MethodNotImplementedError(Exception):
 
     """
