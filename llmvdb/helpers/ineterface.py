@@ -9,7 +9,3 @@ class Interface(ABC):
     @abstractmethod
     def generate_prompt(self):
         pass
-
-    @abstractmethod
-    def create_completion(self):
-        pass

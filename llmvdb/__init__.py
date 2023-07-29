@@ -20,25 +20,11 @@ Example:
     ```
 """
 
-
 from .vdb.doc import ToyDoc
-
 from docarray import DocList
-
 from vectordb import InMemoryExactNNVectorDB
-
 from datasets import load_dataset
-
-from .embedding.model import Model
-
-import openai
-
-import os
-
-from .llm.exceptions import APIKeyNotFoundError
-
 from .helpers.ineterface import Interface
-
 from typing import Optional
 
 
@@ -46,20 +32,20 @@ class Llmvdb(Interface):
     # llm: LLM
     verbose: bool = False
     workspace: Optional[str] = None
-    model: Model
     db: InMemoryExactNNVectorDB
 
     def __init__(
         self,
-        llm=None,
         embedding=None,
+        llm=None,
         hugging_face=None,
         workspace=None,
     ):
+        self.embedding = embedding
+        self.llm = llm
+        
         self.workspace = workspace
         self.hugging_face = hugging_face
-        self.embedding = Model()
-        self.llm = self.load_llm(llm)
         self.db = self.initialize_db()
 
     def initialize_db(self):
@@ -95,7 +81,7 @@ class Llmvdb(Interface):
 
         input = results[0].matches[0].text
 
-        completion = self.create_completion(prompt, input)
+        completion = self.llm.call(prompt, input)
 
         print(completion)
         print("->")
@@ -103,24 +89,3 @@ class Llmvdb(Interface):
 
         print("\n\n참고 문서 : \n")
         print(input)
-
-    def create_completion(self, prompt, input):
-        api_token = os.getenv("OPENAI_API_KEY") or None
-        if api_token is None:
-            raise APIKeyNotFoundError("OPEN AI API key is required")
-
-        openai.api_key = api_token
-
-        return openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {
-                    "role": "system",
-                    "content": f'너는 법률 자문을 위한 챗봇이야. 사용자를 위해 먼저 감정적인 공감을 해주고, 다음 문서를 바탕으로 사용자의 질문에 대해 답변해줘. 문서에서 질문에 대한 답변을 찾을 수 없으면 "없음"이라고 답해줘.\n\n### 문서:\n"\n{input}\n"',
-                },
-                {"role": "user", "content": f"{prompt}"},
-            ],
-        )
-
-    def load_llm(self, llm):
-        return None

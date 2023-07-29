@@ -2,12 +2,13 @@
 from transformers import AutoTokenizer, GPTNeoXModel, GPTNeoXConfig
 import torch
 from typing import Optional
+from .base import Embedding
 
 
-class Model:
-    def __init__(self):
-        self.tokenizer = AutoTokenizer.from_pretrained("beomi/KoAlpaca-Polyglot-5.8B")
-        self.model = InputEmbeddingModel.from_pretrained("beomi/KoAlpaca-Polyglot-5.8B")
+class HuggingFaceEmbedding(Embedding):
+    def __init__(self, pretrained : str = "beomi/KoAlpaca-Polyglot-5.8B"):
+        self.tokenizer = AutoTokenizer.from_pretrained(pretrained)
+        self.model = InputEmbeddingModel.from_pretrained(pretrained)
 
     def get_embedding(self, prompt):
         inputs = self.tokenizer(prompt, return_tensors="pt")
