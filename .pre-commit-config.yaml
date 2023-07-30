@@ -9,12 +9,12 @@ repos:
       - id: ruff
         name: ruff
         # Respect `exclude` and `extend-exclude` settings.
-        args: ["--force-exclude"]
+        args: ["--force-exclude", "--line-length=200"]
   - repo: local
     hooks:
       - id: pytest-check
         name: pytest-check
-        entry: poetry run pytest
+        entry: pytest
         language: system
         pass_filenames: false
         always_run: true

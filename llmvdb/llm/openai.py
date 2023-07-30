@@ -2,7 +2,10 @@ from .base import LLM
 from typing import Optional
 import os
 import openai
+from dotenv import load_dotenv
 from ..exceptions import APIKeyNotFoundError, UnsupportedOpenAIModelError
+
+load_dotenv()
 
 
 class OpenAI(LLM):

@@ -29,20 +29,19 @@ from typing import Optional
 
 
 class Llmvdb(Interface):
-    # llm: LLM
-    verbose: bool = False
-    workspace: Optional[str] = None
     db: InMemoryExactNNVectorDB
 
     def __init__(
         self,
         embedding=None,
         llm=None,
+        verbose: bool = False,
         hugging_face=None,
-        workspace=None,
+        workspace: Optional[str] = None,
     ):
         self.embedding = embedding
         self.llm = llm
+        self.verbose = verbose
 
         self.workspace = workspace
         self.hugging_face = hugging_face
@@ -82,10 +81,10 @@ class Llmvdb(Interface):
         input = results[0].matches[0].text
 
         completion = self.llm.call(prompt, input)
+        respond = completion.choices[0].message.content.strip()
 
-        print(completion)
-        print("->")
-        print(completion.choices[0].message.content.strip())
+        if self.verbose:
+            print("아래 문서를 참고합니다: \n")
+            print(input)
 
-        print("\n\n참고 문서 : \n")
-        print(input)
+        return respond
