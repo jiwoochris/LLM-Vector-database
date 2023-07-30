@@ -65,6 +65,7 @@ your_llm = Llmvdb(
 )
 
 answer = your_llm.generate_prompt("월세방을 얻어 자취를 하고 있는데 군대에 가야합니다. 보증금을 돌려받을 수 있을까요?")
+print(answer)
 ```
 
 The above code will return the following:
