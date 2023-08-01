@@ -23,7 +23,7 @@ Example:
 from .vdb.doc import ToyDoc
 from docarray import DocList
 from vectordb import InMemoryExactNNVectorDB
-from datasets import load_dataset
+from .vdb.huggingface import HuggingFaceDataset
 from .helpers.ineterface import Interface
 from typing import Optional
 
@@ -55,8 +55,7 @@ class Llmvdb(Interface):
             return db
 
         else:
-            # Download Data from huggingface
-            data = load_dataset(self.hugging_face)["train"]
+            data = HuggingFaceDataset(self.hugging_face)
 
             # Index a list of documents with random embeddings
             doc_list = [
