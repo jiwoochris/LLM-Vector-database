@@ -1,14 +1,17 @@
 from llmvdb import Llmvdb
 from llmvdb.embedding.model import HuggingFaceEmbedding
-from llmvdb.llm.openai import OpenAI
+from llmvdb.embedding.fake import FakeEmbedding
 
-embedding = HuggingFaceEmbedding()
-llm = OpenAI(instruction="너는 법률 자문을 위한 챗봇이야. 사용자를 위해 감정적인 공감을 해준 이후 답변을 해줘.")
+from llmvdb.llm.openai import OpenAI
+from llmvdb.llm.fake import FakeLLM
+
+embedding = FakeEmbedding()
+llm = FakeLLM()
 
 your_llm = Llmvdb(
     embedding,
     llm,
-    hugging_face="juicyjung/easylaw_kr_documents",
+    hugging_face="juicyjung/easylaw_kr",
     workspace="workspace_path",  # "juicyjung/easylaw_kr_documents"
 )
 

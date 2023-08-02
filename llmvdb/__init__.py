@@ -55,7 +55,7 @@ class Llmvdb(Interface):
             return db
 
         else:
-            data = HuggingFaceDataset(self.hugging_face)
+            dataset = HuggingFaceDataset(self.hugging_face)
 
             # Index a list of documents with random embeddings
             doc_list = [
@@ -63,7 +63,7 @@ class Llmvdb(Interface):
                     text=i["documents"],
                     embedding=self.embedding.get_embedding(i["documents"]),
                 )
-                for i in data
+                for i in dataset
             ]
             db.index(inputs=DocList[ToyDoc](doc_list))
 
