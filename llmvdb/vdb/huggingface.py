@@ -8,9 +8,7 @@ class HuggingFaceDataset:
         # Download Data from huggingface
         dataset = load_dataset(self.huggingface_link)["train"]
 
-        documents_data = self.data_features(dataset)
-
-        return documents_data
+        self.documents_data = self.data_features(dataset)
 
     def data_features(self, dataset):
         if set(dataset.features.keys()) == set(["documents"]):

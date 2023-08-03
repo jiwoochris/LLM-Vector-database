@@ -32,4 +32,5 @@ class InputEmbeddingModel(GPTNeoXModel):
         if inputs_embeds is None:
             inputs_embeds = self.embed_in(input_ids)
 
+        # return 4096-dimension vector
         return inputs_embeds

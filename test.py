@@ -1,11 +1,11 @@
 from llmvdb import Llmvdb
-from llmvdb.embedding.model import HuggingFaceEmbedding
+from llmvdb.embedding.openai import OpenAIEmbedding
 from llmvdb.embedding.fake import FakeEmbedding
 
 from llmvdb.llm.openai import OpenAI
 from llmvdb.llm.fake import FakeLLM
 
-embedding = FakeEmbedding()
+embedding = OpenAIEmbedding()
 llm = FakeLLM()
 
 your_llm = Llmvdb(
