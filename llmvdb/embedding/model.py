@@ -6,9 +6,9 @@ from .base import Embedding
 
 
 class HuggingFaceEmbedding(Embedding):
-    def __init__(self, pretrained: str = "beomi/KoAlpaca-Polyglot-5.8B"):
-        self.tokenizer = AutoTokenizer.from_pretrained(pretrained)
-        self.model = InputEmbeddingModel.from_pretrained(pretrained)
+    def __init__(self, model_name: str = "beomi/KoAlpaca-Polyglot-5.8B"):
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.model = InputEmbeddingModel.from_pretrained(model_name)
 
     def get_embedding(self, prompt):
         inputs = self.tokenizer(prompt, return_tensors="pt")

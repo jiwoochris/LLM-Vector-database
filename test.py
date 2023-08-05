@@ -1,12 +1,10 @@
 from llmvdb import Llmvdb
 from llmvdb.embedding.openai import OpenAIEmbedding
-from llmvdb.embedding.fake import FakeEmbedding
 
-from llmvdb.llm.openai import OpenAI
-from llmvdb.llm.fake import FakeLLM
+from llmvdb.llm.kullm import Kullm
 
 embedding = OpenAIEmbedding()
-llm = FakeLLM()
+llm = Kullm()
 
 your_llm = Llmvdb(
     embedding,
