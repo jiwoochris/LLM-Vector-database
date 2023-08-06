@@ -32,13 +32,10 @@ class Llama2(LLM):
     def call(self, prompt: str = None, document: str = None) -> str:
         """
         Call the Llama2 LLM.
-
         Args:
             instruction (prompt, document): Instruction to pass
-
         Raises:
             MethodNotImplementedError: Not Implemented Error
-
         Returns:
             str: Response
         """
