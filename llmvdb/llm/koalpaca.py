@@ -25,13 +25,10 @@ class KoAlpaca(LLM):
 
     def call(self, prompt: str = None, document: str = None) -> str:
         """
-        Call the Llama2 LLM.
+        Call the KoAlpaca LLM.
 
         Args:
             instruction (prompt, document): Instruction to pass
-
-        Raises:
-            MethodNotImplementedError: Not Implemented Error
 
         Returns:
             str: Response

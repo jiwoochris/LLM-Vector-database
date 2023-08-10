@@ -13,6 +13,7 @@ class Llama2(LLM):
         "beomi/kollama-13b",
         "beomi/kollama-33b",
         "beomi/llama-2-ko-7b",
+        "upstage/Llama-2-70b-instruct-v2",
     ]
 
     model: str = "beomi/llama-2-ko-7b"
@@ -39,10 +40,18 @@ class Llama2(LLM):
         Returns:
             str: Response
         """
+        prompt = f"""
+        ### System:
+        {self.instruction} 다음 문서를 바탕으로 사용자의 질문에 대해 답변해줘. 문서에서 질문에 대한 답변을 찾을 수 없으면 "없음"이라고 답해줘.\n\n
+        ### User:
+        {prompt}\n\n
+
+        ### Assistant:
+        """
 
         if self.model in self._supported_chat_models:
             response = self.pipeline(
-                f"{self.instruction}\n\n{prompt}\n",
+                prompt,
                 do_sample=True,
                 top_k=1,
                 num_return_sequences=1,
