@@ -1,4 +1,4 @@
-"""Fake embedding"""
+"""Fake LLM"""
 
 from .base import LLM
 

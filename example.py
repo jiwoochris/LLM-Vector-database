@@ -1,16 +1,22 @@
 from llmvdb import Llmvdb
-from llmvdb.embedding.model import HuggingFaceEmbedding
-from llmvdb.llm.openai import OpenAI
+from llmvdb.embedding.openai import OpenAIEmbedding
+from llmvdb.llm.langchain import LangChain
 
-embedding = HuggingFaceEmbedding()
-llm = OpenAI(instruction="너는 법률 자문을 위한 챗봇이야. 사용자를 위해 감정적인 공감을 해준 이후 답변을 해줘.")
+embedding = OpenAIEmbedding()
+llm = LangChain(
+    instruction='너는 챗봇이야. 공감을 잘해주고 친절하게 대해줘.'
+)
 
 your_llm = Llmvdb(
     embedding,
     llm,
-    hugging_face="juicyjung/easylaw_kr",
-    workspace="workspace_path",  # "juicyjung/easylaw_kr"
+    file_path="data/generated_data.json",
+    workspace="workspace_path",
+    verbose=False,
 )
 
-answer = your_llm.generate_prompt("월세방을 얻어 자취를 하고 있는데 군대에 가야합니다. 보증금을 돌려받을 수 있을까요?")
+# your_llm.initialize_db()
+
+
+answer = your_llm.generate_response("배고파 힘들어...")
 print(answer)

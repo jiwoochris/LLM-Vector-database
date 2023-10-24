@@ -1,96 +1,106 @@
-# -*- coding: utf-8 -*-
-"""
-This module includes the implementation of basis llm-vector-database class with methods to run
-the LLMs models based on vector-database. Following LLMs are implemented so far.
-
-Example:
-
-    This module is the Entry point of the `llm-vector-database` package. Following is an example
-    of how to use this Class.
-
-    ```from llmvdb import Llmvdb
-    from llmvdb.embedding.model import HuggingFaceEmbedding
-    from llmvdb.llm.openai import OpenAI
-
-    embedding = HuggingFaceEmbedding()
-    llm = OpenAI(instruction="너는 법률 자문을 위한 챗봇이야. 사용자를 위해 감정적인 공감을 해준 이후 답변을 해줘.")
-
-    your_llm = Llmvdb(
-        embedding,
-        llm,
-        hugging_face="juicyjung/easylaw_kr_documents",
-        workspace="workspace_path",
-    )
-
-    answer = your_llm.generate_prompt("월세방을 얻어 자취를 하고 있는데 군대에 가야합니다. 보증금을 돌려받을 수 있을까요?")
-    print(answer)
-    ```
-"""
-
 from .vdb.doc import ToyDoc
 from docarray import DocList
 from vectordb import InMemoryExactNNVectorDB
-from .vdb.huggingface import HuggingFaceDataset
 from .helpers.ineterface import Interface
 from typing import Optional
+import os
+import json
+
+from .vdb.customdataset import CustomDataset
 
 
 class Llmvdb(Interface):
-    db: InMemoryExactNNVectorDB
-
     def __init__(
         self,
         embedding=None,
         llm=None,
         verbose: bool = False,
-        hugging_face=None,
+        file_path=None,
         workspace: Optional[str] = None,
+        threshold: float = 0.8,
+        top_k: int = 3,
     ):
         self.embedding = embedding
         self.llm = llm
+
         self.verbose = verbose
+        self.llm.verbose = self.verbose
 
         self.workspace = workspace
-        self.hugging_face = hugging_face
-        self.db = self.initialize_db()
+        self.file_path = file_path
+
+        self.threshold = threshold
+        self.top_k = top_k
+
+        # Specify your workspace path
+        self.db = InMemoryExactNNVectorDB[ToyDoc](workspace=self.workspace)
 
     def initialize_db(self):
-        # Specify your workspace path
-        db = InMemoryExactNNVectorDB[ToyDoc](workspace=self.workspace)
+        dataset = CustomDataset(self.file_path).documents_data
 
-        if self.hugging_face is None:
-            return db
+        # Index a list of documents with random embeddings
+        doc_list = [
+            ToyDoc(text=t, embedding=self.embedding.get_embedding(t), related_to=r)
+            for t, r in dataset
+        ]
 
-        else:
-            dataset = HuggingFaceDataset(self.hugging_face).documents_data
+        self.db.index(inputs=DocList[ToyDoc](doc_list))
 
-            # Index a list of documents with random embeddings
-            doc_list = [
-                ToyDoc(
-                    text=i["documents"],
-                    embedding=self.embedding.get_embedding(i["documents"]),
-                )
-                for i in dataset
-            ]
-            db.index(inputs=DocList[ToyDoc](doc_list))
+        # Save db
+        self.db.persist()
 
-            # Save db
-            db.persist()
+    def control_threshold(self, value):
+        self.threshold = value
 
-            return db
+    def control_top_k(self, value):
+        self.top_k = value
 
-    def generate_prompt(self, prompt):
+    def retrieve_document(self, prompt):
         # Perform a search query
-        query = ToyDoc(text=prompt, embedding=self.embedding.get_embedding(prompt))
+        query = ToyDoc(
+            text=prompt, embedding=self.embedding.get_embedding(prompt), related_to=[]
+        )
         results = self.db.search(inputs=DocList[ToyDoc]([query]), limit=5)
 
-        input = results[0].matches[0].text
+        if self.verbose:
+            print(results[0])
 
-        completion = self.llm.call(prompt, input)
-        respond = completion.choices[0].message.content.strip()
+        input_document = ""
+        over_threshold_indices = [
+            i for i, value in enumerate(results[0].scores) if value > self.threshold
+        ]
+
+        # 만약 threshold 0.8을 넘는게 있고 그 개수가 k개보다 적다면 전부 retrieve
+        if 1 <= len(over_threshold_indices) < self.top_k:
+            for index in over_threshold_indices:  # top-k (k=3)
+                input_document += (
+                    "#문서" + str(index) + "\n" + results[0].matches[index].text + "\n"
+                )
+
+        # 만약 threshold 0.8을 넘는게 있고 그 개수가 k개보다 많다면 top-k만 retrieve
+        elif len(over_threshold_indices) >= self.top_k:
+            for index in range(self.top_k):  # top-k (k=3)
+                input_document += (
+                    "#문서" + str(index) + "\n" + results[0].matches[index].text + "\n"
+                )
+
+        # 만약 threshold 0.8을 넘는게 없다면 top-1만
+        elif len(over_threshold_indices) == 0:
+            input_document += "#문서\n" + results[0].matches[0].text + "\n"
 
         if self.verbose:
             print("아래 문서를 참고합니다: \n")
-            print(input)
+            print(input_document)
 
-        return respond
+        return input_document
+
+    def generate_response(self, prompt):
+        input_document = self.retrieve_document(prompt)
+
+        completion = self.llm.call(prompt, input_document)
+
+        return completion
+    
+    def flush_history(self):
+        """Flush chat history memory and re-initialize the conversation"""
+        self.llm.history_memory = self.llm.initial_history_memory

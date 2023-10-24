@@ -7,5 +7,5 @@ class Interface(ABC):
         pass
 
     @abstractmethod
-    def generate_prompt(self):
+    def generate_response(self):
         pass

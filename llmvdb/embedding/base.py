@@ -3,7 +3,7 @@ from ..exceptions import MethodNotImplementedError
 
 
 class Embedding:
-    """Base class to implement a new LLM."""
+    """Base class to implement a new Embedding."""
 
     def is_supported_embedding(self) -> bool:
         return True
