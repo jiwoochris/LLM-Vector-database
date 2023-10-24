@@ -5,8 +5,6 @@ from langchain.schema import HumanMessage, SystemMessage, AIMessage
 from langchain.chat_models import ChatOpenAI
 from langchain.callbacks import get_openai_callback
 
-from ..helpers.post_processing import remove_prefix
-
 from dotenv import load_dotenv
 from ..exceptions import APIKeyNotFoundError
 
