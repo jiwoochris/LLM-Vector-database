@@ -38,9 +38,8 @@ git clone https://github.com/juicyjung/LLM-Vector-database.git
 After cloning the repository, navigate into the directory and install the necessary dependencies, vectordb and torch(appropriate version for your environment) by executing:
 
 ```bash
-pip install -r requirements.txt
-pip install vectordb
-pip install torch
+pip install poetry
+poetry install
 ```
 
 That's it! You've successfully set up LLM-Vector-database on your machine.
