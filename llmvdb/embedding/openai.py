@@ -1,6 +1,7 @@
 from .base import Embedding
 import os
-import openai
+from openai import OpenAI
+
 from dotenv import load_dotenv
 from typing import Optional
 from ..exceptions import APIKeyNotFoundError
@@ -17,8 +18,6 @@ class OpenAIEmbedding(Embedding):
         if self.api_token is None:
             raise APIKeyNotFoundError("OpenAI API key is required")
 
-        openai.api_key = self.api_token
-
         self.model = "text-embedding-ada-002"  # 1536 size vector
 
     def get_embedding(self, prompt):
@@ -30,9 +29,10 @@ class OpenAIEmbedding(Embedding):
         Returns:
             vector: sentence_vector
         """
+        client = OpenAI(api_key=self.api_token)
         prompt = prompt.replace("\n", " ")
-        sentence_vector = openai.Embedding.create(input=[prompt], model=self.model)[
-            "data"
-        ][0]["embedding"]
+        sentence_vector = (
+            client.embeddings.create(input=[prompt], model=self.model).data[0].embedding
+        )
 
         return sentence_vector

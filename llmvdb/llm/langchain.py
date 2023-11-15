@@ -56,7 +56,7 @@ class LangChain(LLM):
         self.streaming = False if self.callbacks is None else True
 
         self.llm = ChatOpenAI(
-            model_name="gpt-4",
+            model_name="gpt-3.5-turbo",
             temperature=0.3,
             streaming=self.streaming,
             callbacks=callbacks,
@@ -87,7 +87,7 @@ class LangChain(LLM):
         print(response)
 
         # 후처리
-        response = remove_prefix(response)
+        # response = remove_prefix(response)
 
         self.history_memory.append(HumanMessage(content=prompt))
         self.history_memory.append(AIMessage(content=response))
@@ -100,7 +100,7 @@ class LangChain(LLM):
     def set_callbacks(self, callbacks):
         """Re-initialize the callbacks for the LLM."""
         self.llm = ChatOpenAI(
-            model_name="gpt-4",
+            model_name="gpt-3.5-turbo",
             temperature=0.3,
             streaming=self.streaming,
             callbacks=callbacks,
