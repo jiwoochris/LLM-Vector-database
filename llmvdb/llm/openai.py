@@ -3,7 +3,6 @@ from typing import Optional
 import os
 from openai import OpenAI
 
-client = OpenAI(api_key=self.api_token)
 from dotenv import load_dotenv
 from ..exceptions import APIKeyNotFoundError, UnsupportedOpenAIModelError
 
@@ -53,6 +52,7 @@ class OpenAI(LLM):
         """
 
         if self.model in self._supported_chat_models:
+            client = OpenAI(api_key=self.api_token)
             response = client.chat.completions.create(
                 model=self.model,
                 messages=[
