@@ -3,8 +3,7 @@ from docarray import DocList
 from vectordb import InMemoryExactNNVectorDB
 from .helpers.ineterface import Interface
 from typing import Optional
-import os
-import json
+
 
 from .vdb.customdataset import CustomDataset
 
@@ -100,7 +99,7 @@ class Llmvdb(Interface):
         completion = self.llm.call(prompt, input_document)
 
         return completion
-    
+
     def flush_history(self):
         """Flush chat history memory and re-initialize the conversation"""
         self.llm.history_memory = self.llm.initial_history_memory

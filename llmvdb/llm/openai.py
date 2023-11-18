@@ -1,7 +1,8 @@
 from .base import LLM
 from typing import Optional
 import os
-import openai
+
+
 from dotenv import load_dotenv
 from ..exceptions import APIKeyNotFoundError, UnsupportedOpenAIModelError
 
@@ -34,8 +35,6 @@ class OpenAI(LLM):
         if self.api_token is None:
             raise APIKeyNotFoundError("OpenAI API key is required")
 
-        openai.api_key = self.api_token
-
         self.instruction = instruction
 
     def call(self, prompt: str, document: str) -> str:
@@ -53,7 +52,8 @@ class OpenAI(LLM):
         """
 
         if self.model in self._supported_chat_models:
-            response = openai.ChatCompletion.create(
+            client = OpenAI(api_key=self.api_token)
+            response = client.chat.completions.create(
                 model=self.model,
                 messages=[
                     {

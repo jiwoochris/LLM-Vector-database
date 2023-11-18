@@ -3,9 +3,7 @@ from llmvdb.embedding.openai import OpenAIEmbedding
 from llmvdb.llm.langchain import LangChain
 
 embedding = OpenAIEmbedding()
-llm = LangChain(
-    instruction='너는 챗봇이야. 공감을 잘해주고 친절하게 대해줘.'
-)
+llm = LangChain(instruction="너는 챗봇이야. 공감을 잘해주고 친절하게 대해줘.")
 
 your_llm = Llmvdb(
     embedding,
@@ -15,7 +13,7 @@ your_llm = Llmvdb(
     verbose=False,
 )
 
-# your_llm.initialize_db()
+your_llm.initialize_db()
 
 
 answer = your_llm.generate_response("배고파 힘들어...")
