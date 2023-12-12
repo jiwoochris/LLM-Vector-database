@@ -23,7 +23,7 @@ if "your_llm" not in st.session_state:
 
     embedding = OpenAIEmbedding()
     llm = LangChain(
-        instruction="너는 챗봇이야. 공감을 잘해주고 친절하게 대해줘.",
+        instruction="너는 법률 자문을 위한 챗봇이야. 사용자를 위해 먼저 감정적인 공감을 해줘야해.",
         callbacks=[stream_handler],
     )
     st.session_state["your_llm"] = Llmvdb(
@@ -39,7 +39,7 @@ if "your_llm" not in st.session_state:
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [
-        ChatMessage(role="assistant", content="안녕하세요! 저는 각종 질문에 답해주는 국민 비서 조아용이에용")
+        ChatMessage(role="assistant", content="안녕하세요! 저는 각종 법률 질문에 답해주는 AI 챗봇 로우봇(LawBot)이에요 ㅎㅎ")
     ]
 
 for msg in st.session_state.messages:
