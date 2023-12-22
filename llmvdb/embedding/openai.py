@@ -30,6 +30,9 @@ class OpenAIEmbedding(Embedding):
             vector: sentence_vector
         """
         client = OpenAI(api_key=self.api_token)
+        
+        print(prompt)
+        
         prompt = prompt.replace("\n", " ")
         sentence_vector = (
             client.embeddings.create(input=[prompt], model=self.model).data[0].embedding

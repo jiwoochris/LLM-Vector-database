@@ -5,7 +5,7 @@ from .helpers.ineterface import Interface
 from typing import Optional
 
 
-from .vdb.customdataset import CustomDataset
+from .vdb.huggingface import HuggingFaceDataset
 
 
 class Llmvdb(Interface):
@@ -35,12 +35,12 @@ class Llmvdb(Interface):
         self.db = InMemoryExactNNVectorDB[ToyDoc](workspace=self.workspace)
 
     def initialize_db(self):
-        dataset = CustomDataset(self.file_path).documents_data
+        dataset = HuggingFaceDataset(self.file_path).documents_data
 
         # Index a list of documents with random embeddings
         doc_list = [
-            ToyDoc(text=t, embedding=self.embedding.get_embedding(t), related_to=r)
-            for t, r in dataset
+            ToyDoc(text=t['documents'], embedding=self.embedding.get_embedding(t['documents']))
+            for t in dataset
         ]
 
         self.db.index(inputs=DocList[ToyDoc](doc_list))
