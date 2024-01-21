@@ -56,7 +56,7 @@ class LangChain(LLM):
         self.streaming = False if self.callbacks is None else True
 
         self.llm = ChatOpenAI(
-            model_name="gpt-3.5-turbo",
+            model_name="gpt-4",
             temperature=0.3,
             streaming=self.streaming,
             callbacks=callbacks,
