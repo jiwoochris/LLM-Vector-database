@@ -13,8 +13,13 @@ your_llm = Llmvdb(
     verbose=False,
 )
 
-your_llm.initialize_db()
+# your_llm.initialize_db()
+
+while True:
+    prompt = input("질문을 입력하세요: ")
+
+    response = your_llm.generate_response(prompt)
+    print("답변: ", response)
 
 
-answer = your_llm.generate_response("월세방을 얻어 자취를 하고 있는데 군대에 가야합니다. 보증금을 돌려받을 수 있을까요?")
-print(answer)
+# "월세방을 얻어 자취를 하고 있는데 군대에 가야합니다. 보증금을 돌려받을 수 있을까요?"

@@ -84,8 +84,6 @@ class LangChain(LLM):
 
         response = response.content
 
-        print(response)
-
         # 후처리
         # response = remove_prefix(response)
 
