@@ -39,7 +39,7 @@ class Llmvdb(Interface):
 
         # Index a list of documents with random embeddings
         doc_list = [
-            ToyDoc(text=t['text'], embedding=self.embedding.get_embedding(t['text']))
+            ToyDoc(text=t, embedding=self.embedding.get_embedding(t))
             for t in dataset
         ]
 
